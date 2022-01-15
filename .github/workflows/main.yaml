@@ -1,0 +1,32 @@
+name: Test and deploy
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+    branches:
+      - "master"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: npm ci
+      - run: npm run test-coverage
+
+  build:
+    if: ${{ startsWith(github.ref, 'ref/tags/') }}$
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: npm ci
+      - run: npm run build
+      # Publish
