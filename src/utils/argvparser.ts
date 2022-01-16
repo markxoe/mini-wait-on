@@ -4,7 +4,7 @@ import { Provider } from "../providers";
 import { getProvider } from "../providers/get";
 
 const validOptions = { "-t": "Timeout duration missing" };
-const validFlags = ["-v"];
+const validFlags = ["-v", "-q"];
 
 // Parse argv
 export const parseArgv = (argv: string[], exitOnFailure: boolean = true) => {

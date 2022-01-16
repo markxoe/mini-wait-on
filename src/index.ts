@@ -32,6 +32,9 @@ Options:
     "-t {s}"
   )} - Timeout in seconds for all resources. Exit as failure
   ${colors.blue("-v")} - Verbose, prints some interesting stuff
+  ${colors.blue(
+    "-q"
+  )} - Quiet, run mini-wait-on silently (higher priority than verbose)
         `
     );
     process.exit(1);
@@ -39,32 +42,39 @@ Options:
 
   // If not, parse arguments
   const parsed = parseArgv(args);
+  const quiet = parsed.flags.includes("-q");
+  const verbose = parsed.flags.includes("-v");
+  const timeout = isNumberOr(parsed.options["-t"], Infinity);
 
   // If there are no providers, skip
   if (parsed.providers.length == 0) {
-    console.log("No resources, exit with code 0");
+    if (!quiet) console.log("No resources, exit with code 0");
     process.exit(0);
   }
 
   // Else print out what to wait for
-  console.log(
-    `Waiting for ${parsed.providers.length} resource${
-      parsed.providers.length == 1 ? "" : "s"
-    }\n\t${parsed.providers.map((i) => i.printableString()).join("\n\t")}`
-  );
+  if (!quiet)
+    console.log(
+      `Waiting for ${parsed.providers.length} resource${
+        parsed.providers.length == 1 ? "" : "s"
+      }\n\t${parsed.providers.map((i) => i.printableString()).join("\n\t")}`
+    );
 
   // And wait for those providers
-  awaitAllProviders(
-    parsed.providers,
-    isNumberOr(parsed.options["-t"], Infinity),
-    parsed.flags.includes("-v")
-  );
+  awaitAllProviders(parsed.providers, {
+    timeout,
+    verbose,
+    quiet,
+  });
 };
 
 const awaitAllProviders = (
   providers: Provider[],
-  timeout: number,
-  verbose: boolean
+  {
+    timeout,
+    verbose,
+    quiet,
+  }: { timeout: number; verbose: boolean; quiet: boolean }
 ) => {
   let timeoutTimerID: NodeJS.Timer; // Here is the timeout timer stored (if timeout enabled)
 
@@ -72,12 +82,14 @@ const awaitAllProviders = (
     // If the timeout is not infinite, create an timeout timer
     timeoutTimerID = setTimeout(() => {
       // Which prints out some info
-      console.log();
-      console.log("Timout reached");
-      const notDoneLength = providers.filter((i) => !i.runnerDone()).length;
-      console.log(
-        `${notDoneLength} resource${notDoneLength == 1 ? "" : "s"} not done`
-      );
+      if (!quiet) {
+        console.log();
+        console.log("Timout reached");
+        const notDoneLength = providers.filter((i) => !i.runnerDone()).length;
+        console.log(
+          `${notDoneLength} resource${notDoneLength == 1 ? "" : "s"} not done`
+        );
+      }
       // And exits with code 1
       process.exit(1);
     }, timeout * 1000);
@@ -85,7 +97,7 @@ const awaitAllProviders = (
 
   // This is what to run if any runner is done with its job
   const onRunnerDone = (provider: Provider) => () => {
-    if (verbose) console.log(provider.printableString(), "is Done");
+    if (verbose && !quiet) console.log(provider.printableString(), "is Done");
 
     // If all runners are done, clear the timeout timer and exit with code 0
     if (providers.every((provider) => provider.runnerDone())) {
