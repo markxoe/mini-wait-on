@@ -13,19 +13,5 @@ export abstract class Provider<R extends Runner = Runner> {
 
   abstract tick(): boolean | Promise<boolean>;
 
-  startRunner() {
-    this.runner.start();
-  }
-
-  runnerDone() {
-    return this.runner.isDone();
-  }
-
-  onDone(fn: Function) {
-    this.runner.on("done", fn);
-
-    return this;
-  }
-
   abstract printableString(): string;
 }

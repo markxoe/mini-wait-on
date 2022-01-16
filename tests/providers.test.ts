@@ -16,23 +16,23 @@ describe("File provider", () => {
   test("Create File ends in success", async () => {
     const filepath = path.join(dir, "test");
     const provider = new FileProvider("file://" + filepath);
-    provider.startRunner();
+    provider.runner.start();
 
-    expect(provider.runnerDone()).toBe(false);
+    expect(provider.runner.isDone()).toBe(false);
 
     fs.writeFileSync(filepath, "");
 
-    await awaitTimeout(110);
-    expect(provider.runnerDone()).toBe(true);
+    await awaitTimeout(150);
+    expect(provider.runner.isDone()).toBe(true);
   });
 
   test("Not creating file ends in failure", async () => {
     const filepath = path.join(dir, "test");
     const provider = new FileProvider("file://" + filepath);
-    provider.startRunner();
-    await awaitTimeout(110);
+    provider.runner.start();
+    await awaitTimeout(150);
 
-    expect(provider.runnerDone()).toBe(false);
+    expect(provider.runner.isDone()).toBe(false);
 
     provider.runner.softBreak();
   });
@@ -50,12 +50,12 @@ describe("File provider", () => {
 
     const onDone = jest.fn();
 
-    provider.onDone(onDone);
-    provider.startRunner();
+    provider.runner.on("done", onDone);
+    provider.runner.start();
 
     fs.writeFileSync(filepath, "");
 
-    await awaitTimeout(110);
+    await awaitTimeout(150);
 
     expect(onDone).toHaveBeenCalledTimes(1);
   });
@@ -72,21 +72,21 @@ describe("Get providers", () => {
   });
 });
 
-describe("Http provider", () => {
+describe("HTTP provider", () => {
   test("HTTP", async () => {
     const server = new TestHTTPServer(8080);
     server.responseCode = 200;
     const provider = new HTTPsProvider("http://localhost:8080");
     provider.runner.setDelay(100);
-    provider.startRunner();
+    provider.runner.start();
 
-    await awaitTimeout(110);
-    expect(provider.runnerDone()).toBeFalsy();
+    await awaitTimeout(150);
+    expect(provider.runner.isDone()).toBeFalsy();
 
     server.start();
-    await awaitTimeout(110);
+    await awaitTimeout(150);
 
-    expect(provider.runnerDone()).toBeTruthy();
+    expect(provider.runner.isDone()).toBeTruthy();
 
     server.end();
   });
@@ -97,15 +97,15 @@ describe("Http provider", () => {
 
     const provider = new HTTPsProvider("https://localhost:8081");
     provider.runner.setDelay(100);
-    provider.startRunner();
+    provider.runner.start();
 
-    await awaitTimeout(110);
-    expect(provider.runnerDone()).toBeFalsy();
+    await awaitTimeout(150);
+    expect(provider.runner.isDone()).toBeFalsy();
 
     server.start();
-    await awaitTimeout(110);
+    await awaitTimeout(150);
 
-    expect(provider.runnerDone()).toBeTruthy();
+    expect(provider.runner.isDone()).toBeTruthy();
 
     server.end();
   });

@@ -101,7 +101,9 @@ const awaitAllProviders = (
       if (!quiet) {
         console.log();
         console.log("Timout reached");
-        const notDoneLength = providers.filter((i) => !i.runnerDone()).length;
+        const notDoneLength = providers.filter(
+          (i) => !i.runner.isDone()
+        ).length;
         console.log(
           `${notDoneLength} resource${notDoneLength == 1 ? "" : "s"} not done`
         );
@@ -116,17 +118,19 @@ const awaitAllProviders = (
     if (verbose && !quiet) console.log(provider.printableString(), "is Done");
 
     // If all runners are done, clear the timeout timer and exit with code 0
-    if (providers.every((provider) => provider.runnerDone())) {
+    if (providers.every((provider) => provider.runner.isDone())) {
       if (timeoutTimerID) clearTimeout(timeoutTimerID);
 
       process.exit(0);
     }
   };
 
-  // Register the onRunnerDone event listeners and start all providers
+  // Register the onRunnerDone event listeners
   providers.forEach((provider) =>
-    provider.onDone(onRunnerDone(provider)).startRunner()
+    provider.runner.on("done", onRunnerDone(provider))
   );
+  // and start all providers
+  providers.forEach((provider) => provider.runner.start());
 };
 
 run();
