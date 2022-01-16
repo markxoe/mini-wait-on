@@ -3,6 +3,7 @@ import { PayloadFN, Runner } from ".";
 // This runner awaits the payload, waits for some delay and then does this until the payload returns true
 export class AsyncRunner extends Runner {
   private delay: number;
+
   constructor(payload: PayloadFN, delay: number) {
     super(payload);
     this.delay = delay;
@@ -22,5 +23,9 @@ export class AsyncRunner extends Runner {
     return new Promise((resolve) => {
       setTimeout(() => resolve(undefined), delay);
     });
+  }
+
+  public setDelay(delay: number) {
+    this.delay = delay;
   }
 }

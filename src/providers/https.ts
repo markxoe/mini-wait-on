@@ -7,10 +7,10 @@ import { AsyncRunner } from "../runners/async";
 export class HTTPsProvider extends Provider<AsyncRunner> {
   private isSecure: boolean;
 
-  constructor(input: string, options?: { delay?: number }) {
+  constructor(input: string) {
     super(input);
     this.isSecure = input.startsWith("https://");
-    this.runner = new AsyncRunner(() => this.tick(), options?.delay ?? 1000);
+    this.runner = new AsyncRunner(() => this.tick(), 1000);
   }
 
   runRequest() {

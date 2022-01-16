@@ -20,4 +20,8 @@ export class TimeRunner extends Runner {
       }
     }, this.interval);
   }
+
+  public setInterval(interval: number) {
+    this.interval = interval;
+  }
 }
