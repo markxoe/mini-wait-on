@@ -3,12 +3,13 @@ name: Test and deploy
 on:
   push:
     tags:
-      - "*.*.*"
+      - "*"
     branches:
       - "master"
 
 jobs:
   test:
+    name: 👷 Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,10 +17,13 @@ jobs:
         with:
           node-version: 16
       - run: npm ci
-      - run: npm run test-coverage
 
-  build:
-    if: ${{ startsWith(github.ref, 'ref/tags/') }}$
+      - name: Test
+        run: npm run test-coverage
+
+  deploy:
+    name: 🚀 Deploy to npm
+    if: ${{ github.ref_type == 'tag' }}
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -28,5 +32,10 @@ jobs:
         with:
           node-version: 16
       - run: npm ci
-      - run: npm run build
-      # Publish
+
+      - name: Build
+        run: npm run build
+      - name: Publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_SECRET }}
