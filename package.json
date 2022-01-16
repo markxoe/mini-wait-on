@@ -35,5 +35,10 @@
   "@parcel/transformer-js": {
     "inlineFS": true,
     "inlineEnvironment": false
+  },
+  "targets":{
+    "main":{
+      "optimize":true
+    }
   }
 }
