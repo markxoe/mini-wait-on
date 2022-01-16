@@ -3,12 +3,15 @@ import process from "node:process";
 import { Provider } from "../providers";
 import { getProvider } from "../providers/get";
 
-const validOptions = { "-t": "Timeout duration missing" };
+const validOptions = {
+  "-t": "Timeout duration missing",
+  "-hd": "HTTP(s) request delay missing",
+};
 const validFlags = ["-v", "-q"];
 
 // Parse argv
 export const parseArgv = (argv: string[], exitOnFailure: boolean = true) => {
-  let options = { "-t": undefined };
+  let options = { "-t": undefined, "-hd": undefined };
   let providers: Provider[] = [];
   let flags: string[] = [];
 

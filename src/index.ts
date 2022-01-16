@@ -4,6 +4,7 @@ import { Provider } from "./providers";
 import { isNumberOr } from "./utils/number";
 import { parseArgv } from "./utils/argvparser";
 import { colors } from "./utils/terminalcolors";
+import { HTTPsProvider } from "./providers/https";
 
 const args = process.argv.slice(2, process.argv.length);
 
@@ -30,7 +31,10 @@ Resources:
 Options:
   ${colors.blue(
     "-t {s}"
-  )} - Timeout in seconds for all resources. Exit as failure
+  )} - Timeout in seconds for all resources. Exit as failure (default: Infinity)
+  ${colors.blue(
+    "-hd {ms}"
+  )} - HTTP(s) request delay in milliseconds (default: 1000)
   ${colors.blue("-v")} - Verbose, prints some interesting stuff
   ${colors.blue(
     "-q"
@@ -60,11 +64,23 @@ Options:
       }\n\t${parsed.providers.map((i) => i.printableString()).join("\n\t")}`
     );
 
+  applyProviderOptions(parsed.providers, { httpsDelay: parsed.options["-hd"] });
+
   // And wait for those providers
   awaitAllProviders(parsed.providers, {
     timeout,
     verbose,
     quiet,
+  });
+};
+
+const applyProviderOptions = (
+  providers: Provider[],
+  { httpsDelay }: { httpsDelay?: number }
+) => {
+  providers.forEach((provider) => {
+    if (provider instanceof HTTPsProvider)
+      if (httpsDelay !== undefined) provider.runner.setDelay(httpsDelay);
   });
 };
 
