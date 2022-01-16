@@ -1,6 +1,6 @@
 # mini-wait-on
 
-11kB, zero dependency CLI alternative for `wait-on` written in TypeScript
+4.5kB, zero-dependency CLI alternative for `wait-on` written in TypeScript
 
 ## Installation
 
@@ -25,15 +25,18 @@ Resources:
   https:// - Same as http:// but with https
 
 Options:
-  -t {s} - Timeout in seconds for all resources. Exit as failure
+  -t {s} - Timeout in seconds for all resources. Exit as failure (default: Infinity)
+  -hd {ms} - HTTP(s) request delay in milliseconds (default: 1000)
   -v - Verbose, prints some interesting stuff
+  -q - Quiet, run mini-wait-on silently (higher priority than verbose)
 ```
 
 ### Examples
 
 ```bash
-$ mini-wait-on file://./dist/index.js -t 5 && echo "Success"
+$ mini-wait-on file://dist/index.js -t 5 -q && echo "Success"
 $ mini-wait-on http://localhost:3000/ https://github.com/ && npm run open-browser
+$ mini-wait-on http://localhost:1234/ file://dist/index.js -hd 100 -q && electron dist/index.js
 ```
 
 ### Resources to wait for
@@ -45,6 +48,8 @@ $ mini-wait-on http://localhost:3000/ https://github.com/ && npm run open-browse
 
 - `-t {s}` Timeout in seconds. Defaults to Infinity
 - `-v` Displays some verbose info. Currently only when an resource is marked as done
+- `-q` Lets the CLI run quietly. This has an higher priority than `-v`.
+- `-hd` HTTPs request delay in milliseconds. Defaults to 1 second (This is the short pause bbetween every HTTPs request)
 
 ## Limitations
 

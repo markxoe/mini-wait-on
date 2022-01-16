@@ -1,7 +1,7 @@
 {
   "name": "mini-wait-on",
   "version": "1.0.0",
-  "description": "Tiny wait-on alternative",
+  "description": "Tiny zero-dependency wait-on alternative",
   "keywords": [
     "wait",
     "cli",
@@ -36,9 +36,9 @@
     "inlineFS": true,
     "inlineEnvironment": false
   },
-  "targets":{
-    "main":{
-      "optimize":true
+  "targets": {
+    "main": {
+      "optimize": true
     }
   }
 }
