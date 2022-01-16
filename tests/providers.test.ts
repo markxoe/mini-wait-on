@@ -76,7 +76,8 @@ describe("Http provider", () => {
   test("HTTP", async () => {
     const server = new TestHTTPServer(8080);
     server.responseCode = 200;
-    const provider = new HTTPsProvider("http://localhost:8080", { delay: 100 });
+    const provider = new HTTPsProvider("http://localhost:8080");
+    provider.runner.setDelay(100);
     provider.startRunner();
 
     await awaitTimeout(110);
@@ -94,9 +95,8 @@ describe("Http provider", () => {
     const server = new TestHTTPSServer(8081);
     server.responseCode = 200;
 
-    const provider = new HTTPsProvider("https://localhost:8081", {
-      delay: 100,
-    });
+    const provider = new HTTPsProvider("https://localhost:8081");
+    provider.runner.setDelay(100);
     provider.startRunner();
 
     await awaitTimeout(110);
