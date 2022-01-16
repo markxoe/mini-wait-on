@@ -4,7 +4,7 @@ import { Provider } from ".";
 import { AsyncRunner } from "../runners/async";
 
 // This provider waits for an 200 OK response
-export class HTTPsProvider extends Provider {
+export class HTTPsProvider extends Provider<AsyncRunner> {
   private isSecure: boolean;
 
   constructor(input: string, options?: { delay?: number }) {

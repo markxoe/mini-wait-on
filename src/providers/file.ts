@@ -3,7 +3,7 @@ import { Provider } from ".";
 import { TimeRunner } from "../runners/time";
 
 // This provider waits for an file to be existing
-export class FileProvider extends Provider {
+export class FileProvider extends Provider<TimeRunner> {
   private file: string;
 
   constructor(input: string) {
