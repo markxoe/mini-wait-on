@@ -17,7 +17,7 @@ export class FileProvider extends Provider<TimeRunner> {
   }
 
   printableString(): string {
-    return this.file;
+    return `File: ${this.file}`;
   }
 }
 
